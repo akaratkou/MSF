@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 @Service
 public class Mp3Service {
+    public static final int SECONDS_IN_ONE_MINUTE = 60;
 
     public SongMetadataDto testMp3(byte[] mp3Data) throws NoSuchAlgorithmException {
         if (mp3Data == null || mp3Data.length == 0) {
@@ -56,10 +57,20 @@ public class Mp3Service {
         SongMetadataDto songMetadataDto = new SongMetadataDto();
         songMetadataDto.setAlbum(metadata.get("xmpDM:album"));
         songMetadataDto.setArtist(metadata.get("xmpDM:artist"));
-        songMetadataDto.setDuration(metadata.get("xmpDM:duration"));
+        songMetadataDto.setDuration(durationInFormatMMSS(metadata.get("xmpDM:duration")));
         songMetadataDto.setName(metadata.get("dc:title"));
         songMetadataDto.setYear(metadata.get("xmpDM:releaseDate"));
         return songMetadataDto;
     }
 
+    private String durationInFormatMMSS(String durationStr) {
+        try {
+            double durationSeconds = Double.parseDouble(durationStr);
+            int minutes = (int) (durationSeconds / SECONDS_IN_ONE_MINUTE);
+            int seconds = (int) (durationSeconds % 60);
+            return String.format("%02d:%02d", minutes, seconds);
+        } catch (NumberFormatException _) {
+            return "00:00";
+        }
+    }
 }
