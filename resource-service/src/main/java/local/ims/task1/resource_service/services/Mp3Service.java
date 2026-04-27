@@ -45,7 +45,7 @@ public class Mp3Service {
 
 
     @Transactional
-    public Integer saveMp3(byte[] mp3Data) throws NoSuchAlgorithmException {
+    public Integer saveMp3(byte[] mp3Data) throws NoSuchAlgorithmException, IOException {
         if (mp3Data == null || mp3Data.length == 0) {
             throw new InputDataBaseRequestException("MP3 data must not be empty");
         }
