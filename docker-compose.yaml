@@ -50,6 +50,15 @@ services:
     command: >
       java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${RESOURCE_SERVICE_JDWP_DEBUG_PORT} -jar app.jar
 
+  resource-processor:
+    build:
+      context: ./resource-processor
+      dockerfile: Dockerfile
+    ports:
+      - "${RESOURCE_PROCESSOR_EXPOSE_PORT}:8080"
+    restart: on-failure
+    environment:
+      - APP_PORT=8080
 
   song-service:
     build:
