@@ -23,7 +23,7 @@ public class S3Service {
         try (InputStream is = resource.getInputStream()) {
             return is.readAllBytes();
         } catch (Exception e) {
-            throw new RuntimeException("Не удалось скачать файл из S3", e);
+            throw new RuntimeException("Cannot dowload files from S3", e);
         }
     }
 
