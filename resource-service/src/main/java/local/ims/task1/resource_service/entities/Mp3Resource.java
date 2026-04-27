@@ -15,11 +15,6 @@ public class Mp3Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, columnDefinition = "bytea")
-    private byte[] data;
-
-    public Mp3Resource(byte[] data) {
-        this.data = data;
-    }
+    private String location;
 }
 

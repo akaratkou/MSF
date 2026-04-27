@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Slf4j
@@ -28,7 +29,7 @@ public class Mp3Controller {
 
 
     @PostMapping(value = "/resources", consumes = "audio/mpeg", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResourceIdDto> uploadMp3(@RequestBody byte[] mp3Data) {
+    public ResponseEntity<ResourceIdDto> uploadMp3(@RequestBody byte[] mp3Data) throws NoSuchAlgorithmException {
         log.info("Received request to upload MP3 file, size: {} bytes", mp3Data.length);
         ResourceIdDto result = new ResourceIdDto(mp3Service.saveMp3(mp3Data));
         log.info("Successfully uploaded MP3 file with id: {}", result.id());

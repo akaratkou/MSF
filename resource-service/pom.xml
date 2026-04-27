@@ -31,6 +31,7 @@
 		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
 		<postrgresql.driver.version>42.7.9</postrgresql.driver.version>
 		<spring-cloud.version>2025.1.1</spring-cloud.version>
+		<spring-cloud.aws.version>4.0.1</spring-cloud.aws.version>
 		<tika.version>3.2.3</tika.version>
 		<lombok.version>1.18.40</lombok.version>
 	</properties>
@@ -96,6 +97,17 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<artifactId>spring-cloud-aws-s3</artifactId>
+			<version>4.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
+			<version>${spring-cloud.aws.version}</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -104,6 +116,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.awspring.cloud</groupId>
+				<artifactId>spring-cloud-aws-dependencies</artifactId>
+				<version>${spring-cloud.aws.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
