@@ -1,4 +1,18 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   resource-db:
     image: postgres:17-alpine
     ports:
@@ -53,10 +67,15 @@ services:
       - SPRING_CLOUD_AWS_REGION_STATIC=${SPRING_CLOUD_AWS_REGION_STATIC}
       - SPRING_CLOUD_AWS_S3_ENDPOINT=http://ministack:4566
       - FILES_S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
     depends_on:
       - resource-db
       - eureka-server
       - ministack
+      - rabbitmq
     command: >
       java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${RESOURCE_SERVICE_JDWP_DEBUG_PORT} -jar app.jar
 
@@ -72,8 +91,13 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICE_URL_ZONE}
       - SPRING_CLOUD_INETUTILS_IGNORED_INTERFACES=lo.*,veth.*,docker.*
       - EUREKA_INSTANCE_IP_ADDRESS=$${spring.cloud.client.ip-address}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
     depends_on:
       - eureka-server
+      - rabbitmq
 
   song-service:
     build:

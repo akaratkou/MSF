@@ -74,6 +74,11 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<!-- RabbitMQ / AMQP -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

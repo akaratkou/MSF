@@ -40,6 +40,7 @@ public class Mp3Service {
     private final Mp3ResourceRepository repository;
     private final MetadataService metadataService;
     private final S3Service s3Service;
+    private final ResourceMessageSender resourceMessageSender;
     @Value("${files.s3.bucket.name:resource-bucket}")
     String bucketName;
 
@@ -62,6 +63,7 @@ public class Mp3Service {
 
         resource = repository.save(resource);
 
+        resourceMessageSender.sendResourceUploaded(resource.getId());
 
 //        SongMetadataDto songMetadataDto = extractMp3Headers(mp3Data);
 //        songMetadataDto.setId(resource.getId());

@@ -108,6 +108,11 @@
 			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
 			<version>${spring-cloud.aws.version}</version>
 		</dependency>
+		<!-- RabbitMQ / AMQP -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
