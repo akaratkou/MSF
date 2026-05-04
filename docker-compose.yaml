@@ -9,6 +9,11 @@ services:
       - POSTGRES_USER=${RESOURCE_DB_USERNAME}
     volumes:
       - ./init-scripts/resource-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${RESOURCE_DB_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   song-db:
     image: postgres:17-alpine
@@ -20,6 +25,11 @@ services:
       - POSTGRES_USER=${SONG_DB_USERNAME}
     volumes:
       - ./init-scripts/song-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${RESOURCE_DB_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
   resource-service:
@@ -62,6 +72,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICE_URL_ZONE}
       - SPRING_CLOUD_INETUTILS_IGNORED_INTERFACES=lo.*,veth.*,docker.*
       - EUREKA_INSTANCE_IP_ADDRESS=$${spring.cloud.client.ip-address}
+    depends_on:
+      - eureka-server
 
   song-service:
     build:
