@@ -6,7 +6,9 @@ import local.ims.task1.resource_service.dto.SongMetadataDto;
 import local.ims.task1.resource_service.interfaces.MetadataServiceClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,42 +21,52 @@ public class MetadataService {
 
     private final MetadataServiceClient metadataServiceClient;
 
-
+    @Retryable(
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000, multiplier = 2.0)
+    )
     public String createSongMetadata(SongMetadataDto metadata) {
-        try {
-            metadataServiceClient.createSongMetadata(metadata);
-            log.info("Successfully created song metadata: {}", metadata);
-            return StringUtils.EMPTY;
-        } catch (FeignException ex) {
-            log.error("Error creating song metadata: {} - {}", ex.status(), ex.contentUTF8());
-            return ex.contentUTF8();
-        }
+        log.info("Attempting to create song metadata: {}", metadata);
+        metadataServiceClient.createSongMetadata(metadata);
+        log.info("Successfully created song metadata for id={}", metadata.getId());
+        return "";
     }
 
-    public List<Integer> deleteSongMetadata(String ids) {
-        try {
-            DeletedIdsDto deletedIdsDto = metadataServiceClient.deleteSongMetadata(ids);
-            log.info("Successfully deleted song metadata with ids: {}", deletedIdsDto);
-            if (deletedIdsDto == null) {
-                log.warn("Received null response body when deleting song metadata with ids: {}", ids);
-                return List.of();
-            }
-            return deletedIdsDto.ids();
-        } catch (FeignException ex) {
-            log.error("Error deleting song metadata: {} - {}", ex.status(), ex.contentUTF8());
-            return List.of();
-        }
+    @Recover
+    public String createSongMetadataRecover(FeignException e, SongMetadataDto metadata) {
+        log.error("All retry attempts exhausted for creating song metadata id={}. Error: {} - {}",
+                metadata.getId(), e.status(), e.contentUTF8());
+        return e.contentUTF8();
     }
 
+    @Retryable(
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000, multiplier = 2.0)
+    )
     public List<Integer> deleteSongMetadataByIds(List<Integer> ids) {
         if (ids == null || ids.isEmpty()) {
             return List.of();
         }
+        String idsCsv = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
+        log.info("Attempting to delete song metadata for ids={}", idsCsv);
+        DeletedIdsDto result = metadataServiceClient.deleteSongMetadata(idsCsv);
+        log.info("Successfully deleted song metadata for ids={}", idsCsv);
+        return result != null ? result.ids() : List.of();
+    }
 
-        String idsCsv = ids.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+    @Recover
+    public List<Integer> deleteSongMetadataByIdsRecover(FeignException e, List<Integer> ids) {
+        log.error("All retry attempts exhausted for deleting song metadata ids={}. Error: {} - {}",
+                ids, e.status(), e.contentUTF8());
+        return List.of();
+    }
 
-        return deleteSongMetadata(idsCsv);
+    public List<Integer> deleteSongMetadata(String ids) {
+        List<Integer> idList = List.of(ids.split(","))
+                .stream()
+                .map(String::trim)
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
+        return deleteSongMetadataByIds(idList);
     }
 }
