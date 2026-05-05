@@ -22,6 +22,13 @@ import java.security.NoSuchAlgorithmException;
 public class Mp3Service {
     public static final int SECONDS_IN_ONE_MINUTE = 60;
 
+    public SongMetadataDto extractMetadata(byte[] mp3Data) {
+        if (mp3Data == null || mp3Data.length == 0) {
+            throw new InputDataBaseRequestException("MP3 data must not be empty");
+        }
+        return extractMp3Headers(mp3Data);
+    }
+
     public SongMetadataDto testMp3(byte[] mp3Data) throws NoSuchAlgorithmException {
         if (mp3Data == null || mp3Data.length == 0) {
             throw new InputDataBaseRequestException("MP3 data must not be empty");
