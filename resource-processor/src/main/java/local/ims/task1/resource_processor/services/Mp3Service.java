@@ -76,7 +76,7 @@ public class Mp3Service {
             int minutes = (int) (durationSeconds / SECONDS_IN_ONE_MINUTE);
             int seconds = (int) (durationSeconds % 60);
             return String.format("%02d:%02d", minutes, seconds);
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException e) {
             return "00:00";
         }
     }

@@ -104,7 +104,7 @@ public class Mp3Service {
                 .map(part -> {
                     try {
                         return Integer.parseInt(part);
-                    } catch (NumberFormatException _) {
+                    } catch (NumberFormatException e) {
                         throw new InputDataBaseRequestException(
                                 String.format("Invalid ID format: '%s'. Only positive integers are allowed", part)
                         );
@@ -165,7 +165,7 @@ public class Mp3Service {
             int minutes = (int) (durationSeconds / SECONDS_IN_ONE_MINUTE);
             int seconds = (int) (durationSeconds % 60);
             return String.format("%02d:%02d", minutes, seconds);
-        } catch (NumberFormatException _) {
+        } catch (NumberFormatException e) {
             return "00:00";
         }
     }

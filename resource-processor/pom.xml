@@ -26,13 +26,16 @@
 		<tag/>
 		<url/>
 	</scm>
-	<properties>
-		<java.version>25</java.version>
-		<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-		<tika.version>3.2.3</tika.version>
-		<lombok.version>1.18.40</lombok.version>
-		<spring-cloud.version>2025.1.1</spring-cloud.version>
-	</properties>
+ <properties>
+ 	<java.version>21</java.version>
+ 	<maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+ 	<tika.version>3.2.3</tika.version>
+ 	<lombok.version>1.18.40</lombok.version>
+ 	<spring-cloud.version>2025.1.1</spring-cloud.version>
+  <testcontainers.version>1.20.4</testcontainers.version>
+ 	<rest-assured.version>5.4.0</rest-assured.version>
+ 	<wiremock.version>3.6.0</wiremock.version>
+ </properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -84,53 +87,194 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
-		<!-- Spring Retry -->
-		<dependency>
-			<groupId>org.springframework.retry</groupId>
-			<artifactId>spring-retry</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-		</dependency>
-	</dependencies>
+ 	<!-- Spring Retry -->
+ 	<dependency>
+ 		<groupId>org.springframework.retry</groupId>
+ 		<artifactId>spring-retry</artifactId>
+ 	</dependency>
+ 	<dependency>
+ 		<groupId>org.aspectj</groupId>
+ 		<artifactId>aspectjweaver</artifactId>
+ 	</dependency>
+ 
+ 	<!-- Testing Dependencies -->
+ 	<dependency>
+ 		<groupId>org.springframework.boot</groupId>
+ 		<artifactId>spring-boot-starter-test</artifactId>
+ 		<scope>test</scope>
+ 	</dependency>
+ 	<dependency>
+ 		<groupId>org.springframework.amqp</groupId>
+ 		<artifactId>spring-rabbit-test</artifactId>
+ 		<scope>test</scope>
+ 	</dependency>
+ 
+ 	<!-- Testcontainers -->
+ 	<dependency>
+ 		<groupId>org.testcontainers</groupId>
+ 		<artifactId>testcontainers</artifactId>
+ 		<version>${testcontainers.version}</version>
+ 		<scope>test</scope>
+ 	</dependency>
+ 	<dependency>
+ 		<groupId>org.testcontainers</groupId>
+ 		<artifactId>junit-jupiter</artifactId>
+ 		<version>${testcontainers.version}</version>
+ 		<scope>test</scope>
+ 	</dependency>
+ 	<dependency>
+ 		<groupId>org.testcontainers</groupId>
+ 		<artifactId>rabbitmq</artifactId>
+ 		<version>${testcontainers.version}</version>
+ 		<scope>test</scope>
+ 	</dependency>
+ 
+ 	<!-- Spring Cloud Contract Stub Runner -->
+ 	<dependency>
+ 		<groupId>org.springframework.cloud</groupId>
+ 		<artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+ 		<scope>test</scope>
+ 	</dependency>
+ 
+ 	<!-- RestAssured -->
+ 	<dependency>
+ 		<groupId>io.rest-assured</groupId>
+ 		<artifactId>rest-assured</artifactId>
+ 		<version>${rest-assured.version}</version>
+ 		<scope>test</scope>
+ 	</dependency>
+ 
+ 	<!-- WireMock -->
+ 	<dependency>
+ 		<groupId>org.wiremock</groupId>
+ 		<artifactId>wiremock-standalone</artifactId>
+ 		<version>${wiremock.version}</version>
+ 		<scope>test</scope>
+ 	</dependency>
+ 
+ 	<!-- AssertJ for fluent assertions -->
+ 	<dependency>
+ 		<groupId>org.assertj</groupId>
+ 		<artifactId>assertj-core</artifactId>
+ 		<scope>test</scope>
+ 	</dependency>
+ 
+ 	<!-- Awaitility for async testing -->
+ 	<dependency>
+ 		<groupId>org.awaitility</groupId>
+ 		<artifactId>awaitility</artifactId>
+ 		<scope>test</scope>
+ 	</dependency>
+ </dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+ <dependencyManagement>
+ 	<dependencies>
+ 		<!-- Docker Java Client BOM -->
+ 		<dependency>
+ 			<groupId>com.github.docker-java</groupId>
+ 			<artifactId>docker-java-bom</artifactId>
+    <version>3.7.1</version>
+ 			<type>pom</type>
+ 			<scope>import</scope>
+ 		</dependency>
+ 
+ 		<!-- Testcontainers BOM -->
+ 		<dependency>
+ 			<groupId>org.testcontainers</groupId>
+ 			<artifactId>testcontainers-bom</artifactId>
+ 			<version>1.20.4</version>
+ 			<type>pom</type>
+ 			<scope>import</scope>
+ 		</dependency>
+ 
+ 		<dependency>
+ 			<groupId>org.springframework.cloud</groupId>
+ 			<artifactId>spring-cloud-dependencies</artifactId>
+ 			<version>${spring-cloud.version}</version>
+ 			<type>pom</type>
+ 			<scope>import</scope>
+ 		</dependency>
+ 	</dependencies>
+ </dependencyManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>${lombok.version}</version>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+ <build>
+ 	<plugins>
+ 		<plugin>
+ 			<groupId>org.apache.maven.plugins</groupId>
+ 			<artifactId>maven-compiler-plugin</artifactId>
+ 			<version>${maven-compiler-plugin.version}</version>
+ 			<configuration>
+ 				<source>${java.version}</source>
+ 				<target>${java.version}</target>
+ 				<annotationProcessorPaths>
+ 					<path>
+ 						<groupId>org.projectlombok</groupId>
+ 						<artifactId>lombok</artifactId>
+ 						<version>${lombok.version}</version>
+ 					</path>
+ 				</annotationProcessorPaths>
+ 			</configuration>
+ 		</plugin>
+ 		<plugin>
+ 			<groupId>org.springframework.boot</groupId>
+ 			<artifactId>spring-boot-maven-plugin</artifactId>
+ 		</plugin>
+ 
+ 		<!-- Surefire for unit tests -->
+ 		<plugin>
+ 			<groupId>org.apache.maven.plugins</groupId>
+ 			<artifactId>maven-surefire-plugin</artifactId>
+ 			<configuration>
+ 				<includes>
+ 					<include>**/*Test.java</include>
+ 				</includes>
+ 				<excludes>
+ 					<exclude>**/*IntegrationTest.java</exclude>
+ 				</excludes>
+ 			</configuration>
+ 		</plugin>
+ 
+ 		<!-- Failsafe for integration tests -->
+ 		<plugin>
+ 			<groupId>org.apache.maven.plugins</groupId>
+ 			<artifactId>maven-failsafe-plugin</artifactId>
+ 			<executions>
+ 				<execution>
+ 					<goals>
+ 						<goal>integration-test</goal>
+ 						<goal>verify</goal>
+ 					</goals>
+ 				</execution>
+ 			</executions>
+ 			<configuration>
+ 				<includes>
+ 					<include>**/*IntegrationTest.java</include>
+ 				</includes>
+ 			</configuration>
+ 		</plugin>
+ 
+ 		<!-- JaCoCo for code coverage -->
+ 		<plugin>
+ 			<groupId>org.jacoco</groupId>
+ 			<artifactId>jacoco-maven-plugin</artifactId>
+ 			<version>0.8.12</version>
+ 			<executions>
+ 				<execution>
+ 					<goals>
+ 						<goal>prepare-agent</goal>
+ 					</goals>
+ 				</execution>
+ 				<execution>
+ 					<id>report</id>
+ 					<phase>test</phase>
+ 					<goals>
+ 						<goal>report</goal>
+ 					</goals>
+ 				</execution>
+ 			</executions>
+ 		</plugin>
+ 	</plugins>
+ </build>
 	<repositories>
 		<repository>
 			<id>spring-snapshots</id>

@@ -65,7 +65,7 @@ public class SongServiceImpl implements SongService {
                 .map(part -> {
                     try {
                         return Integer.parseInt(part.trim());
-                    } catch (NumberFormatException _) {
+                    } catch (NumberFormatException e) {
                         throw new InputDataValidationException(
                                 String.format("Invalid ID format: '%s'. Only positive integers are allowed", part)
                         );
